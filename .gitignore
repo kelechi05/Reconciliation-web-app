@@ -2,6 +2,7 @@
 venv/
 myenv/
 env/
+.venv/
 
 # Django local settings / Secrets
 .env
@@ -10,4 +11,5 @@ db.sqlite3
 
 # Python bytecode
 *.pyc
-__pycache__/
+__pycache__/venv/
+venv/
