@@ -1,0 +1,158 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>FD vs GL Matcher (Django)</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{% static 'matcher/styles.css' %}">
+    <script src="{% static 'matcher/dashboard-processing.js' %}" defer></script>
+</head>
+<body class="dashboard-page">
+    <div class="processing-overlay" data-processing-overlay aria-hidden="true" hidden>
+        <div class="processing-panel" role="status" aria-live="polite" aria-atomic="true">
+            <div class="processing-spinner" aria-hidden="true"></div>
+            <p data-processing-status>Reading Excel files...</p>
+        </div>
+    </div>
+
+    <div class="page-shell">
+        <aside class="dashboard-sidebar">
+            {% with company_display=profile.company_name|default:"Company account" %}
+                <div class="profile-panel">
+                    <div class="avatar-space">
+                        {% if profile.company_logo %}
+                            <img src="{{ profile.company_logo.url }}" alt="{{ company_display }}">
+                        {% else %}
+                            <span>{{ company_display|first|upper }}</span>
+                        {% endif %}
+                    </div>
+                    <p class="welcome-label">Welcome back</p>
+                    <h3>{{ company_display }}</h3>
+                </div>
+            {% endwith %}
+
+            <div class="sidebar-section">
+                <h4>Downloads</h4>
+                {% if has_results %}
+                    <a href="{% url 'download_all_results' %}" class="btn btn-primary btn-block">Download All Files</a>
+                    <div class="download-links">
+                        <a href="{% url 'download_fd' %}">Bank Statement Unmatched</a>
+                        <a href="{% url 'download_gl' %}">General Ledger Unmatched</a>
+                        <a href="{% url 'download_third' %}">Report File Unmatched</a>
+                        <a href="{% url 'download_matched_fd_gl' %}">Matched Bank Statement and GL</a>
+                        <a href="{% url 'download_matched_gl_third' %}">Matched GL and Report File</a>
+                        <a href="{% url 'download_reconciled_statement' %}">Final Reconciled Statement</a>
+                    </div>
+                {% else %}
+                    <p class="sidebar-empty">Run a match to unlock result downloads.</p>
+                {% endif %}
+            </div>
+
+            <form method="post" action="{% url 'account_logout' %}" class="logout-form">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-outline-secondary btn-block">Sign out</button>
+            </form>
+        </aside>
+
+        <main class="dashboard-main">
+            <div class="dashboard-header">
+                <div>
+                    <h2>Reconciliation Dashboard</h2>
+                </div>
+            </div>
+
+            <form method="post" enctype="multipart/form-data" class="mt-4 mb-4 upload-form" data-match-form>
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="btn btn-primary" data-match-submit>Match Records</button>
+            </form>
+
+            {% if reconciliation_summary %}
+                <section class="reconciliation-summary">
+                    <h3>Reconciliation Summary</h3>
+                    <div class="summary-grid">
+                        {% for item in reconciliation_summary %}
+                            <div class="summary-item">
+                                <span>{{ item.label }}</span>
+                                <strong>{{ item.value }}</strong>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </section>
+            {% endif %}
+
+            {% if unmatched_fd %}
+                <details class="result-panel" open>
+                    <summary>
+                        <span>Unmatched Bank Statement Records</span>
+                    </summary>
+                    <div class="result-panel-body">
+                        {{ unmatched_fd|safe }}
+                        <a href="{% url 'download_fd' %}" class="btn btn-outline-primary mt-2">Download FD</a>
+                    </div>
+                </details>
+            {% endif %}
+
+            {% if unmatched_gl %}
+                <details class="result-panel" open>
+                    <summary>
+                        <span>Unmatched General Ledger Records</span>
+                    </summary>
+                    <div class="result-panel-body">
+                        {{ unmatched_gl|safe }}
+                        <a href="{% url 'download_gl' %}" class="btn btn-outline-primary mt-2">Download GL</a>
+                    </div>
+                </details>
+            {% endif %}
+
+            {% if unmatched_third %}
+                <details class="result-panel" open>
+                    <summary>
+                        <span>Unmatched Report File Records</span>
+                    </summary>
+                    <div class="result-panel-body">
+                        {{ unmatched_third|safe }}
+                        <a href="{% url 'download_third' %}" class="btn btn-outline-primary mt-2">Download Report File Unmatched</a>
+                    </div>
+                </details>
+            {% endif %}
+
+            {% if reconciled_statement %}
+                <details class="result-panel" open>
+                    <summary>
+                        <span>Final Reconciled Statement</span>
+                    </summary>
+                    <div class="result-panel-body">
+                        {{ reconciled_statement|safe }}
+                        <a href="{% url 'download_reconciled_statement' %}" class="btn btn-outline-primary mt-2">Download Final Reconciled Statement</a>
+                    </div>
+                </details>
+            {% endif %}
+
+            {% if matched_fd_gl %}
+                <details class="result-panel" open>
+                    <summary>
+                        <span>Matched Bank Statement and GL Records</span>
+                    </summary>
+                    <div class="result-panel-body">
+                        {{ matched_fd_gl|safe }}
+                        <a href="{% url 'download_matched_fd_gl' %}" class="btn btn-outline-success mt-2">Download Matched Statement and GL</a>
+                    </div>
+                </details>
+            {% endif %}
+
+            {% if matched_gl_third %}
+                <details class="result-panel" open>
+                    <summary>
+                        <span>Matched GL and Report File Records</span>
+                    </summary>
+                    <div class="result-panel-body">
+                        {{ matched_gl_third|safe }}
+                        <a href="{% url 'download_matched_gl_third' %}" class="btn btn-outline-success mt-2">Download Matched GL and Report File</a>
+                    </div>
+                </details>
+            {% endif %}
+        </main>
+    </div>
+</body>
+</html>

@@ -1,0 +1,107 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Create account</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{% static 'matcher/styles.css' %}">
+    <script src="{% static 'matcher/signup-password-rules.js' %}" defer></script>
+</head>
+<body class="auth-register-page">
+    <nav class="site-nav">
+        <a href="{% url 'account_login' %}" class="brand">
+            <span class="logo-mark">ER</span>
+            <span>Easy-RecoNow</span>
+        </a>
+        <ul class="nav-links">
+            <li><a href="{% url 'account_login' %}">Sign in</a></li>
+            <li><a href="{% url 'account_signup' %}">Register</a></li>
+        </ul>
+    </nav>
+
+    <main class="register-layout">
+        <section class="register-copy">
+            <h1>Start reconciling with a cleaner finance workflow.</h1>
+            <p>
+                Create a company or personal account to manage statement matching, review unmatched records,
+                and download reconciliation reports from a secure dashboard.
+            </p>
+        </section>
+
+        <section class="auth-shell">
+            <div class="form-heading">
+                <span class="logo-mark">ER</span>
+                <h2>Create account</h2>
+            </div>
+
+            {% if form.non_field_errors %}
+                <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+            {% endif %}
+
+            <form method="post" action="{% url 'account_signup' %}" class="mt-4">
+                {% csrf_token %}
+                {% if redirect_field_value %}
+                    <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}">
+                {% endif %}
+
+                <div class="form-field">
+                    {{ form.email.label_tag }}
+                    {{ form.email }}
+                    {{ form.email.errors }}
+                </div>
+
+                <div class="form-field">
+                    {{ form.account_type.label_tag }}
+                    {{ form.account_type }}
+                    {{ form.account_type.errors }}
+                </div>
+
+                <div class="form-field">
+                    {{ form.full_name.label_tag }}
+                    {{ form.full_name }}
+                    {{ form.full_name.errors }}
+                </div>
+
+                <div class="form-field">
+                    {{ form.company_name.label_tag }}
+                    {{ form.company_name }}
+                    {{ form.company_name.errors }}
+                </div>
+
+                <div class="form-field">
+                    {{ form.phone_number.label_tag }}
+                    {{ form.phone_number }}
+                    {{ form.phone_number.errors }}
+                </div>
+
+                <div class="form-field">
+                    {{ form.address.label_tag }}
+                    {{ form.address }}
+                    {{ form.address.errors }}
+                </div>
+
+                <div class="form-field">
+                    {{ form.password1.label_tag }}
+                    {{ form.password1 }}
+                    {{ form.password1.errors }}
+                    <ul class="password-rules" id="signup-password-rules" aria-live="polite" hidden>
+                        <li data-password-rule="length" hidden>Use at least 8 characters.</li>
+                        <li data-password-rule="numeric" hidden>Password cannot be entirely numeric.</li>
+                        <li data-password-rule="common" hidden>Password is too common.</li>
+                        <li data-password-rule="similar" hidden>Password is too similar to your personal or company details.</li>
+                    </ul>
+                </div>
+
+                <div class="form-field">
+                    {{ form.password2.label_tag }}
+                    {{ form.password2 }}
+                    {{ form.password2.errors }}
+                </div>
+
+                <button type="submit" class="btn btn-primary">Create account</button>
+                <a href="{% url 'account_login' %}" class="btn btn-outline-secondary">Sign in</a>
+            </form>
+        </section>
+    </main>
+</body>
+</html>

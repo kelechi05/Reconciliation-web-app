@@ -1,0 +1,19 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Sign out</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{% static 'matcher/styles.css' %}">
+</head>
+<body class="auth-logout-page">
+    <main class="auth-shell">
+        <h2>Sign out</h2>
+        <form method="post" action="{% url 'account_logout' %}" class="mt-4">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-primary">Sign out</button>
+            <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary">Stay signed in</a>
+        </form>
+    </main>
+</body>
+</html>

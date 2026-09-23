@@ -1,0 +1,53 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Sign in</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{% static 'matcher/styles.css' %}">
+</head>
+<body class="auth-login-page">
+    <nav class="site-nav">
+        <a href="{% url 'account_login' %}" class="brand">
+            <span class="logo-mark">ER</span>
+            <span>Easy-RecoNow</span>
+        </a>
+        <ul class="nav-links">
+            <li><a href="{% url 'account_login' %}">Sign in</a></li>
+            <li><a href="{% url 'account_signup' %}">Register</a></li>
+        </ul>
+    </nav>
+
+    <main class="login-layout">
+        <section class="hero-copy">
+            <div class="accent-line"></div>
+            <h1>Reconcile faster with confidence.</h1>
+            <p>
+                One click matching algorithm in one secure workspace built for finance teams,
+                auditors, and business owners who need clear exceptions and reliable reports.
+            </p>
+        </section>
+
+        <section class="auth-shell">
+            <h2>Sign in</h2>
+
+            {% if form.non_field_errors %}
+                <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+            {% endif %}
+
+            <form method="post" action="{% url 'account_login' %}" class="mt-4">
+                {% csrf_token %}
+                {% if redirect_field_value %}
+                    <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}">
+                {% endif %}
+                {{ form.as_p }}
+                <div class="auth-form-meta">
+                    <a href="{% url 'account_reset_password' %}">Forgot password?</a>
+                </div>
+                <button type="submit" class="btn btn-primary">Sign in</button>
+                <a href="{% url 'account_signup' %}" class="btn btn-outline-secondary">Create account</a>
+            </form>
+        </section>
+    </main>
+</body>
+</html>
